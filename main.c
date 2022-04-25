@@ -1,13 +1,13 @@
 #include <stdio.h>
-#include "rdp.h"
+#include "monitor.h"
 
 
 int main(){
 
-rdp_o myrdp;
+monitor_o mymonitor;
 
-new_rdp(&myrdp);
+new_monitor(&mymonitor);
 
-myrdp.metodos->printNumero(&myrdp);
+mymonitor.metodos->printNumero(&mymonitor);
 
 }
