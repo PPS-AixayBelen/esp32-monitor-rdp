@@ -27,7 +27,7 @@ struct monitor{
     int numberTransitions;
     //revisar como se asocian los mutex a las condiciones (si un mutex se puede asociar a mas de una condicion, por ej)
     pthread_mutex_t mutex; //reemplaza al reentrant lock
-    pthread_cond_t espera; //reemplazaria al quesWait, tendria que haber una por cada transcion
+    pthread_cond_t *espera; //reemplazaria al quesWait, tendria que haber una por cada transcion
     int *boolQuesWait; //0 = no esta esperando , 1 = esta esperando
 
     // Politica politica;
