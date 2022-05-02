@@ -2,9 +2,6 @@
 #include <stdio.h>
 #include "leerMatriz.h"
 
-void printNumero(rdp_o * rdp){
-    printf("Numero: %d \n",rdp->numero);
-}
 
 int isPos (rdp_o * rdp,int index){
     return 0;
@@ -13,7 +10,6 @@ int isPos (rdp_o * rdp,int index){
 
 struct rdp_metodos rdpMetodos ={
 
-    .printNumero = printNumero,
     .isPos = isPos,
     // .updateTimeStamps = updateTimeStamps,
     //  .getMarkVector = getMarkVector,
@@ -38,6 +34,14 @@ extern void new_rdp(rdp_o * p_rdp)
         p_rdp->E[i] = 0;
     }
 
+    p_rdp->minTimeArrival = 25;
+    p_rdp->minTimeSrv1 = 50;
+    p_rdp->minTimesSrv2 = 50;
+    p_rdp->estados = 16;
+    p_rdp-> transiciones = 15;
+
+    char M[] = "0 0 0 0 0 0 1 1 1 0 0 0 0 0 1 1";
+    cargar_vector(16,p_rdp->M,M);
     leer_matriz(16,15,p_rdp->Ineg[0],"Ineg");
     leer_matriz(16,15,p_rdp->Ipos[0],"Ipos");
     leer_matriz(16,15,p_rdp->I[0],"Imatriz");
@@ -49,9 +53,20 @@ extern void new_rdp(rdp_o * p_rdp)
     // }
     // printf("\n");
     // }
-  
 
-   p_rdp->numero = 2;
+    char userBuffer[] = "5 13 9 14";
+    cargar_vector(4,p_rdp->useBuffers,userBuffer);
+
+    char isBuffer[] = "2 3";
+    cargar_vector(2,p_rdp->isBuffer,isBuffer);
+
+   p_rdp->isGenTransition[0]=0;
+
+    char isAddBuffer[] = "5 13";
+    cargar_vector(2,p_rdp->isAddBuffer,isAddBuffer);
+
+    //Cargar sensitizedTime
+
    p_rdp->metodos = &rdpMetodos;
 }
 

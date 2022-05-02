@@ -26,4 +26,19 @@ int leer_matriz(int filas, int columnas, int *matriz,char * nombreArchivo){
     }
 
     fclose(archivo);
+    return 1;
+}
+
+void cargar_vector(int size, int * vector, char * v){
+
+    char * token;
+
+    token = strtok(v," ");
+    vector[0] = atoi(token);
+    
+    for(int i = 1; i<size;i++){
+        token = strtok(NULL," ");
+        vector[i] = atoi(token);
+    }
+
 }
