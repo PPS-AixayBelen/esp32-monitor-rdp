@@ -1,3 +1,5 @@
+#include "time.h"
+
 typedef struct rdp rdp_o;
 
 
@@ -24,7 +26,7 @@ struct rdp{
     int E[15]; //
     int Sensitized[15]; 
 
-    int sensitivedTime[2]; //Cambiar, es de tipo LocalTime. No se como manejar fechas aca
+    time_t sensitivedTime[15];
     int minTimeArrival; 
     int minTimeSrv1; 
     int minTimesSrv2; 

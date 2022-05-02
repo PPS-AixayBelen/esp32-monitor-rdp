@@ -1,6 +1,7 @@
 #include "rdp.h"
 #include <stdio.h>
 #include "leerMatriz.h"
+#include "time.h"
 
 
 int isPos (rdp_o * rdp,int index){
@@ -65,7 +66,9 @@ extern void new_rdp(rdp_o * p_rdp)
     char isAddBuffer[] = "5 13";
     cargar_vector(2,p_rdp->isAddBuffer,isAddBuffer);
 
-    //Cargar sensitizedTime
+    for(int i = 0;i<15;i++){
+        time(&p_rdp->sensitivedTime[i]);
+    }
 
    p_rdp->metodos = &rdpMetodos;
 }
