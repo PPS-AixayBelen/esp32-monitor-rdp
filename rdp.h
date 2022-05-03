@@ -5,13 +5,9 @@ typedef struct rdp rdp_o;
 
 struct rdp_metodos{
 
-    int  (*isPos) (rdp_o *,int index);
+    int  (*isPos) (rdp_o *,int * index);
     void (*updateTimeStamps) (rdp_o *, int * oldSens);
-    int * (* getMarkVector)(rdp_o *);
-    int * (*getUseBuffer)(rdp_o *);
-    int * (*getIsBuffer)(rdp_o *);
-    int * (*getCountBuffer)(rdp_o *);
-    int * (*getSensitized)(rdp_o *);
+    void (*getSensitized)(rdp_o *);
     int   (*ifEnd)(rdp_o *);
 };
 
@@ -26,10 +22,10 @@ struct rdp{
     int E[15]; //
     int Sensitized[15]; 
 
-    time_t sensitivedTime[15];
+    time_t sensitizedTime[15];
     int minTimeArrival; 
     int minTimeSrv1; 
-    int minTimesSrv2; 
+    int minTimeSrv2; 
     int useBuffers[4];
     int isBuffer[2];
     int isGenTransition[1];
