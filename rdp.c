@@ -23,7 +23,7 @@ extern void new_rdp(rdp_o *p_rdp)
 {
     p_rdp->estados = 16;
     p_rdp->transiciones = 15;
-    p_rdp->minTimeArrival = 15;
+    p_rdp->minTimeArrival = 0;
     p_rdp->minTimeSrv1 = 50;
     p_rdp->minTimeSrv2 = 50;
 
@@ -97,6 +97,8 @@ int isPos(rdp_o *rdp, int *index)
 
     int temp;
 
+    printf("checkpoint 2\n");
+
     rdp->metodos->getSensitized(rdp);
     int aux[rdp->transiciones];
 
@@ -119,6 +121,8 @@ int isPos(rdp_o *rdp, int *index)
         else
             aux[m] = 0; // Si no pongo el else, quedan los unos de la operacion anterior
     }
+
+    printf("checkpoint 3\n");
 
     int zeroCounter = 0; // Esto es para ver que lo que quiero y puedo disparar sea diferente de 0
     for (int m = 0; m < rdp->transiciones; m++)
@@ -148,13 +152,15 @@ int isPos(rdp_o *rdp, int *index)
     {                                    // Si algun numero del nuevo vector de marcado es negativo, no puedo dispararla
         mPrima[n] = rdp->M[n] + aux2[n]; // Sumo para obtener el nuevo vector de marcado
         if (print)
-            printf("%d %s \n", mPrima[n], "M_name[n]");
+            printf("%d %s \n", mPrima[n], M_name[n]);
 
         if (mPrima[n] < 0)
         {
             return -1;
         }
     }
+
+    printf("checkpoint 4\n");
 
     time_t shootTime;
 
@@ -189,7 +195,7 @@ int isPos(rdp_o *rdp, int *index)
                 {
                     if (print)
                         printf("%s %d %s\n", "Quise disparar T", i, " y estoy fuera del intervalo de tiempo");
-                    return (int)shootTime - transitionTime;
+                    return (int) transitionTime - shootTime ;
                 }
             }
         }
@@ -205,6 +211,8 @@ int isPos(rdp_o *rdp, int *index)
     }
 
     updateTimeStamps(rdp, oldSens); // Le mando el vector de sensiblizado del marcado anterior
+
+    printf("checkpoint 5\n");
 
     return 0;
 }
@@ -237,18 +245,24 @@ void updateTimeStamps(rdp_o *rdp, int *oldSens)
 
     int newSens[rdp->transiciones];
 
+    printf("MATRIZ DE BELEN\n");
+    printArray(rdp->transiciones, rdp->Sensitized);
+
     for (int i = 0; i < rdp->transiciones; i++)
     {
         newSens[i] = rdp->Sensitized[i];
     }
 
-    if (print)
-    {
-        printf("Viejo sensiblizado: ");
-        printArray(rdp->transiciones, oldSens);
-        printf("Nuevo sensiblizado: ");
-        printArray(rdp->transiciones, newSens);
-    }
+    // if (print)
+    // {
+    //     printf("Viejo sensiblizado: ");
+    //     printArray(rdp->transiciones, oldSens);
+    //     printf("Nuevo sensiblizado: ");
+    //     printArray(rdp->transiciones, newSens);
+    // }
+
+    printf("MATRIZ DE BELEN 2\n");
+    printArray(rdp->transiciones, newSens);
     for (int i = 0; i < rdp->transiciones; i++)
     {
         if ((newSens[i] > 0) && (newSens[i] != oldSens[i]))

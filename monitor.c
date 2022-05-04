@@ -1,5 +1,6 @@
 #include "monitor.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 void printNumero(monitor_o * monitor){
     printf("Numero: %d \n",monitor->numero);
@@ -57,12 +58,20 @@ int shoot (monitor_o *monitor, int index){
     
     int numberTransitions = monitor->numberTransitions;
     int shoot [numberTransitions];
+    for (int i = 0; i < monitor->numberTransitions; i++){
+        shoot[i] = 0;
+    }
     shoot[index] = 1;
     int shootResult = -1;
 
+    printf("checkpoint 1\n");
+
     while(1){
 
-        //shootResult = pn.isPos(shoot);
+        shootResult = monitor->rdp->metodos->isPos(monitor->rdp, shoot);
+        
+        printf("checkpoint 6 - %d\n", shootResult);
+        
         if (shootResult < 0){
             if (monitor->end){
 
@@ -73,6 +82,9 @@ int shoot (monitor_o *monitor, int index){
             pthread_cond_wait(&(monitor->espera[index]), &(monitor->mutex));
         }
         else if (shootResult == 0){
+            
+            printf("checkpoint 7\n");
+            
             monitor->boolQuesWait[index] = 0;
             signalPolitic(monitor);
             break;
@@ -90,6 +102,7 @@ int shoot (monitor_o *monitor, int index){
         pthread_mutex_unlock(&(monitor->mutex));
     }
     else{
+        printf("checkpoint 8\n");
         exit(1); //rompiose
     }
 
@@ -108,8 +121,9 @@ struct monitor_metodos monitorMetodos ={
     .shoot = shoot
 };
 
-extern void new_monitor(monitor_o * p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int numberTransitions, int *boolQuesWait)
+extern void new_monitor(monitor_o * p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int numberTransitions, int *boolQuesWait, rdp_o *rdp)
 {
+    p_monitor->rdp = rdp;
     p_monitor->numero = 2;
     p_monitor->mutex = mutex;
     p_monitor->espera = espera;
