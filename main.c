@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "monitor.h"
 #include "rdp.h"
 #include <stdlib.h>
 #include <string.h>
@@ -6,9 +7,10 @@
 
 int main(){
 
-rdp_o myrdp;
+monitor_o mymonitor;
 
-new_rdp(&myrdp);
+new_monitor(&mymonitor);
 
+mymonitor.metodos->printNumero(&mymonitor);
 }
 
