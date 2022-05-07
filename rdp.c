@@ -205,7 +205,7 @@ int isPos(rdp_o *rdp, int *index)
     {
         rdp->M[i] = mPrima[i];
     }
-    printf("array\n");
+    printf("Array de marcado\n");
     printArray(16, rdp->M);
     if (index[0] == 1)
     {

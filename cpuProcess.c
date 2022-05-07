@@ -15,7 +15,7 @@ void *run(cpuProcess_o *cpuProcess){
             // shootResult = monitor.shoot(cpuProcess->processList[i]);
             if(shootResult == -1){
                 printf("END: %d", i);
-                return;           
+                return NULL;           
             }
             else if (shootResult > 0){
                 sleep(shootResult + 1 );

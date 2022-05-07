@@ -19,16 +19,20 @@ void printArray2(int size, int *array)
 int verifyMInvariants (monitor_o *monitor){
 
     int mark[16];
+    printf("ARRAY QUE SE ROMPE?\n");
     printArray2(16, monitor->rdp->M);
+
     for (int i = 0; i < 16; i++){
         mark[i] = monitor->rdp->M[i];
     }
-    printArray2(16, mark);
-    printf("no me rompi xd\n");
+
     if (((mark[1] + mark[7]) == 1) && ((mark[4] + mark[12] + mark[14]) == 1) && ((mark[5] + mark[13] + mark[15]) == 1) && ((mark[0] + mark[6]) == 1) && ((mark[8] + mark[9]) == 1))
-        return 0;
+    {
+        printf("Verifico invariantes bien\n");
+         return 1;
+    }   
     else 
-        return 1; //rompiose        
+        return 0; //rompiose        
 
 }
 
