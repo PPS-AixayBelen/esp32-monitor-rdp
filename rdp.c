@@ -205,6 +205,8 @@ int isPos(rdp_o *rdp, int *index)
     {
         rdp->M[i] = mPrima[i];
     }
+    printf("array\n");
+    printArray(16, rdp->M);
     if (index[0] == 1)
     {
         rdp->packetCounter++;
@@ -245,8 +247,6 @@ void updateTimeStamps(rdp_o *rdp, int *oldSens)
 
     int newSens[rdp->transiciones];
 
-    printf("MATRIZ DE BELEN\n");
-    printArray(rdp->transiciones, rdp->Sensitized);
 
     for (int i = 0; i < rdp->transiciones; i++)
     {
@@ -261,7 +261,7 @@ void updateTimeStamps(rdp_o *rdp, int *oldSens)
     //     printArray(rdp->transiciones, newSens);
     // }
 
-    printf("MATRIZ DE BELEN 2\n");
+    printf("MATRIZ DE SENSIBILIZADAS\n");
     printArray(rdp->transiciones, newSens);
     for (int i = 0; i < rdp->transiciones; i++)
     {
