@@ -27,6 +27,11 @@ int main(){
     pthread_cond_t espera[15];
     int boolQuesWait[15] = {0};
 
+    pthread_mutex_init(&mutex, NULL);
+    for (int i = 0; i < 15; i++){
+        pthread_cond_init(&espera[i], NULL);
+
+    }
     new_rdp(&rdp);
     new_monitor(&mymonitor, mutex, espera, 15, boolQuesWait, &rdp);
     new_cpuProcess(&myCpuProcess,array, 2, monitor);

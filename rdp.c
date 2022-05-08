@@ -97,8 +97,6 @@ int isPos(rdp_o *rdp, int *index)
 
     int temp;
 
-    printf("checkpoint 2\n");
-
     rdp->metodos->getSensitized(rdp);
     int aux[rdp->transiciones];
 
@@ -122,7 +120,6 @@ int isPos(rdp_o *rdp, int *index)
             aux[m] = 0; // Si no pongo el else, quedan los unos de la operacion anterior
     }
 
-    printf("checkpoint 3\n");
 
     int zeroCounter = 0; // Esto es para ver que lo que quiero y puedo disparar sea diferente de 0
     for (int m = 0; m < rdp->transiciones; m++)
@@ -160,7 +157,6 @@ int isPos(rdp_o *rdp, int *index)
         }
     }
 
-    printf("checkpoint 4\n");
 
     time_t shootTime;
 
@@ -214,8 +210,6 @@ int isPos(rdp_o *rdp, int *index)
 
     updateTimeStamps(rdp, oldSens); // Le mando el vector de sensiblizado del marcado anterior
 
-    printf("checkpoint 5\n");
-
     return 0;
 }
 
@@ -261,7 +255,7 @@ void updateTimeStamps(rdp_o *rdp, int *oldSens)
     //     printArray(rdp->transiciones, newSens);
     // }
 
-    printf("MATRIZ DE SENSIBILIZADAS\n");
+    printf("MATRIZ DE TRANSICIONES SENSIBILIZADAS\n");
     printArray(rdp->transiciones, newSens);
     for (int i = 0; i < rdp->transiciones; i++)
     {

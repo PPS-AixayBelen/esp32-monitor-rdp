@@ -19,7 +19,7 @@ void printArray2(int size, int *array)
 int verifyMInvariants (monitor_o *monitor){
 
     int mark[16];
-    printf("ARRAY QUE SE ROMPE?\n");
+    printf("Vector de Marcado nuevo\n");
     printArray2(16, monitor->rdp->M);
 
     for (int i = 0; i < 16; i++){
@@ -28,7 +28,6 @@ int verifyMInvariants (monitor_o *monitor){
 
     if (((mark[1] + mark[7]) == 1) && ((mark[4] + mark[12] + mark[14]) == 1) && ((mark[5] + mark[13] + mark[15]) == 1) && ((mark[0] + mark[6]) == 1) && ((mark[8] + mark[9]) == 1))
     {
-        printf("Verifico invariantes bien\n");
          return 1;
     }   
     else 
@@ -82,38 +81,30 @@ int shoot (monitor_o *monitor, int index){
     shoot[index] = 1;
     int shootResult = -1;
 
-    printf("checkpoint 1\n");
 
     while(1){
 
         shootResult = monitor->rdp->metodos->isPos(monitor->rdp, shoot);
         
-        printf("checkpoint 6 - %d\n", shootResult);
         
         if (shootResult < 0){
             if (monitor->end){
-
                 pthread_mutex_unlock(&(monitor->mutex));
                 return -1;
             }
+            printf("me fui a mimir\n");
             monitor->boolQuesWait[index] = 1;
             pthread_cond_wait(&(monitor->espera[index]), &(monitor->mutex));
         }
         else if (shootResult == 0){
-            
-            printf("checkpoint 7\n");
-            
+                
             monitor->boolQuesWait[index] = 0;
             //signalPolitic(monitor);
-            printf("ewrewrewrwerew\n");
-
             break;
         }
         else{
-            
             pthread_mutex_unlock(&(monitor->mutex));
             return shootResult;
-
         }
 
     }
@@ -123,7 +114,7 @@ int shoot (monitor_o *monitor, int index){
         return 0;
     }
     else{
-        printf("checkpoint 8\n");
+        printf("error de Invariantes\n");
         exit(1); //rompiose
     }
 

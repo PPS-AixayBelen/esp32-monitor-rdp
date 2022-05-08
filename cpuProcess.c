@@ -9,7 +9,7 @@ void *run(cpuProcess_o *cpuProcess){
     int shootResult = 0;
     while(1){
         for (int i = 0; i < (cpuProcess->processNum); i++){
-            printf("iteracion %d\n", i);
+            printf("Nro de transicion a disparar: %d\n", cpuProcess->processList[i]);
             shootResult = cpuProcess->monitor->metodos->shoot(cpuProcess->monitor, cpuProcess->processList[i]);
             printf("shootResult - %d\n", shootResult);
             // shootResult = monitor.shoot(cpuProcess->processList[i]);
@@ -18,6 +18,7 @@ void *run(cpuProcess_o *cpuProcess){
                 return NULL;           
             }
             else if (shootResult > 0){
+                printf("salu2\n");
                 sleep(shootResult + 1 );
                 cpuProcess->monitor->metodos->shoot(cpuProcess->monitor, cpuProcess->processList[i]);
                 // monitor.shoot(cpuProcess->processList[i]);
