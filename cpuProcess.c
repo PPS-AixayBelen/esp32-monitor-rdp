@@ -5,7 +5,8 @@
 
 
 void *run(cpuProcess_o *cpuProcess){
-    
+    printf("VOY A DISPARAR: %d\n", cpuProcess->processList[0]);
+    sleep(3);
     int shootResult = 0;
     while(1){
         for (int i = 0; i < (cpuProcess->processNum); i++){

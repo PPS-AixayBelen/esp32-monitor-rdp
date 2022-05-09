@@ -14,7 +14,7 @@ struct cpuProcess{
     int processNum; //Para probar    
     monitor_o *monitor;
     int *processList; //puntero a lista de transiciones
-    const struct cpuProcess_metodos * metodos;
+    const struct cpuProcess_metodos *metodos;
 };
 
 //Funciones

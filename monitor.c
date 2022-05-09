@@ -92,7 +92,7 @@ int shoot (monitor_o *monitor, int index){
                 pthread_mutex_unlock(&(monitor->mutex));
                 return -1;
             }
-            printf("me fui a mimir\n");
+            printf("me fui a mimir disparando %d, por shootResult = %d\n", index, shootResult);
             monitor->boolQuesWait[index] = 1;
             pthread_cond_wait(&(monitor->espera[index]), &(monitor->mutex));
         }

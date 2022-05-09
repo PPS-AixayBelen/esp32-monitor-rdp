@@ -127,8 +127,11 @@ int isPos(rdp_o *rdp, int *index)
         if (aux[m] != 0)
             zeroCounter++;
     }
-    if (zeroCounter == 0)
+    if (zeroCounter == 0){
+        printf("me rompi aca 1\n");
         return -1;
+    }
+        
 
     int aux2[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -153,6 +156,7 @@ int isPos(rdp_o *rdp, int *index)
 
         if (mPrima[n] < 0)
         {
+            printf("me rompi aca\n");
             return -1;
         }
     }
@@ -191,7 +195,7 @@ int isPos(rdp_o *rdp, int *index)
                 {
                     if (print)
                         printf("%s %d %s\n", "Quise disparar T", i, " y estoy fuera del intervalo de tiempo");
-                    return (int) transitionTime - shootTime ;
+                    return (unsigned int) transitionTime - shootTime ;
                 }
             }
         }
