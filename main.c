@@ -1,4 +1,3 @@
-
 //Defining _REENTRANT causes the compiler to use thread safe (i.e. re-entrant) 
 //versions of several functions in the C library.
 #define _REENTRANT
@@ -24,15 +23,15 @@ int main(){
 
     monitor_o *monitor = &mymonitor;
     cpuProcess_o tShooter[3];
-    // cpuProcess_o t0Shooter;
-    // cpuProcess_o t1Shooter;
-    // cpuProcess_o t8Shooter;
+    cpuProcess_o t0Shooter;
+    cpuProcess_o t1Shooter;
+    cpuProcess_o t8Shooter;
 
     int *shootArray[3];
     int shootSequence1[1]={0}; //dispara T0
     int shootSequence2[1]={5}; //dispara T1
     int shootSequence3[1]={13}; //dispara T8
-
+    
     shootArray [0] = shootSequence1;
     shootArray [1] = shootSequence2;
     shootArray [2] = shootSequence3;
@@ -56,13 +55,7 @@ int main(){
     // monitor->metodos->shoot(monitor, 0);
     // monitor->metodos->shoot(monitor, 5);
     for (int i = 0; i < 3; i++)
-        pthread_create(&c[i], &atrib,(&tShooter[i])->metodos->run((&tShooter[i])) , (cpuProcess_o *) &tShooter[i]);
-
-
-    // pthread_create(&c[0], &atrib, (&t0Shooter)->metodos->run((&t0Shooter)) , (cpuProcess_o *) &t0Shooter);
-    // printf("voy a crear el proximo hilo\n");
-    // pthread_create(&c[1], &atrib, (&t1Shooter)->metodos->run((&t1Shooter)) , (cpuProcess_o *) &t1Shooter);
-    // pthread_create(&c[2], &atrib, (&t8Shooter)->metodos->run((&t8Shooter)) , (cpuProcess_o *) &t8Shooter);
+        pthread_create(&c[i], &atrib,(&tShooter[i])->metodos->run , (cpuProcess_o *) &tShooter[i]);
 
     for (int i = 0; i < 3; i++){
         pthread_join(c[i], NULL);

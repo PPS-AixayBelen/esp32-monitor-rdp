@@ -1,5 +1,3 @@
-
-  
 //Defining _REENTRANT causes the compiler to use thread safe (i.e. re-entrant) 
 //versions of several functions in the C library.
 #define _REENTRANT
