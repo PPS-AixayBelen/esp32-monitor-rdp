@@ -23,7 +23,7 @@ extern void new_rdp(rdp_o *p_rdp)
 {
     p_rdp->estados = 16;
     p_rdp->transiciones = 15;
-    p_rdp->minTimeArrival = 0;
+    p_rdp->minTimeArrival = 2;
     p_rdp->minTimeSrv1 = 50;
     p_rdp->minTimeSrv2 = 50;
 
@@ -97,8 +97,6 @@ int isPos(rdp_o *rdp, int *index)
 
     int temp;
 
-    printf("checkpoint 2\n");
-
     rdp->metodos->getSensitized(rdp);
     int aux[rdp->transiciones];
 
@@ -122,7 +120,6 @@ int isPos(rdp_o *rdp, int *index)
             aux[m] = 0; // Si no pongo el else, quedan los unos de la operacion anterior
     }
 
-    printf("checkpoint 3\n");
 
     int zeroCounter = 0; // Esto es para ver que lo que quiero y puedo disparar sea diferente de 0
     for (int m = 0; m < rdp->transiciones; m++)
@@ -130,8 +127,11 @@ int isPos(rdp_o *rdp, int *index)
         if (aux[m] != 0)
             zeroCounter++;
     }
-    if (zeroCounter == 0)
+    if (zeroCounter == 0){ 
+        printf("vector de disparo vacio o insensibilizado\n");
         return -1;
+    }
+        
 
     int aux2[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -156,11 +156,11 @@ int isPos(rdp_o *rdp, int *index)
 
         if (mPrima[n] < 0)
         {
+            printf("la transicion no se puede disparar, marcado resultante\n");
             return -1;
         }
     }
 
-    printf("checkpoint 4\n");
 
     time_t shootTime;
 
@@ -195,7 +195,7 @@ int isPos(rdp_o *rdp, int *index)
                 {
                     if (print)
                         printf("%s %d %s\n", "Quise disparar T", i, " y estoy fuera del intervalo de tiempo");
-                    return (int) transitionTime - shootTime ;
+                    return (unsigned int) transitionTime - shootTime ;
                 }
             }
         }
@@ -205,14 +205,14 @@ int isPos(rdp_o *rdp, int *index)
     {
         rdp->M[i] = mPrima[i];
     }
+    printf("Array de marcado\n");
+    printArray(16, rdp->M);
     if (index[0] == 1)
     {
         rdp->packetCounter++;
     }
 
     updateTimeStamps(rdp, oldSens); // Le mando el vector de sensiblizado del marcado anterior
-
-    printf("checkpoint 5\n");
 
     return 0;
 }
@@ -245,8 +245,6 @@ void updateTimeStamps(rdp_o *rdp, int *oldSens)
 
     int newSens[rdp->transiciones];
 
-    printf("MATRIZ DE BELEN\n");
-    printArray(rdp->transiciones, rdp->Sensitized);
 
     for (int i = 0; i < rdp->transiciones; i++)
     {
@@ -261,7 +259,7 @@ void updateTimeStamps(rdp_o *rdp, int *oldSens)
     //     printArray(rdp->transiciones, newSens);
     // }
 
-    printf("MATRIZ DE BELEN 2\n");
+    printf("MATRIZ DE TRANSICIONES SENSIBILIZADAS\n");
     printArray(rdp->transiciones, newSens);
     for (int i = 0; i < rdp->transiciones; i++)
     {

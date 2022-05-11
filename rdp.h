@@ -1,3 +1,5 @@
+#ifndef _RDP_
+#define _RDP_
 #include "time.h"
 
 typedef struct rdp rdp_o;
@@ -42,3 +44,6 @@ struct rdp{
 //Funciones
 
 void new_rdp(rdp_o * p_rdp);
+
+
+#endif 
