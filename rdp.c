@@ -23,7 +23,7 @@ extern void new_rdp(rdp_o *p_rdp)
 {
     p_rdp->estados = 16;
     p_rdp->transiciones = 15;
-    p_rdp->minTimeArrival = 0;
+    p_rdp->minTimeArrival = 2;
     p_rdp->minTimeSrv1 = 50;
     p_rdp->minTimeSrv2 = 50;
 
@@ -127,8 +127,8 @@ int isPos(rdp_o *rdp, int *index)
         if (aux[m] != 0)
             zeroCounter++;
     }
-    if (zeroCounter == 0){
-        printf("me rompi aca 1\n");
+    if (zeroCounter == 0){ 
+        printf("vector de disparo vacio o insensibilizado\n");
         return -1;
     }
         
@@ -156,7 +156,7 @@ int isPos(rdp_o *rdp, int *index)
 
         if (mPrima[n] < 0)
         {
-            printf("me rompi aca\n");
+            printf("la transicion no se puede disparar, marcado resultante\n");
             return -1;
         }
     }

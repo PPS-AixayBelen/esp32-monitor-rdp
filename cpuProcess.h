@@ -1,3 +1,6 @@
+#ifndef _CPUPROCESS_
+#define _CPUPROCESS_
+
 #include "monitor.h"
 
 
@@ -20,3 +23,5 @@ struct cpuProcess{
 //Funciones
 
 void new_cpuProcess(cpuProcess_o * p_cpuProcess, int *processList, int processNum, monitor_o *monitor);
+
+#endif

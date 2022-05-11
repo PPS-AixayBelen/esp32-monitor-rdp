@@ -28,7 +28,7 @@ int main(){
     cpuProcess_o t8Shooter;
 
     int *shootArray[3];
-    int shootSequence1[1]={0}; //dispara T0
+    int shootSequence1[1]={0}; //dispara T0 
     int shootSequence2[1]={5}; //dispara T1
     int shootSequence3[1]={13}; //dispara T8
     

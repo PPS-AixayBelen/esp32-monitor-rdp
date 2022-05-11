@@ -12,14 +12,14 @@ void *run(cpuProcess_o *cpuProcess){
         for (int i = 0; i < (cpuProcess->processNum); i++){
             printf("Nro de transicion a disparar: %d\n", cpuProcess->processList[i]);
             shootResult = cpuProcess->monitor->metodos->shoot(cpuProcess->monitor, cpuProcess->processList[i]);
-            printf("shootResult - %d\n", shootResult);
+            printf("shootResult - %d disparo- %d\n", shootResult, cpuProcess->processList[i]);
             // shootResult = monitor.shoot(cpuProcess->processList[i]);
             if(shootResult == -1){
                 printf("END: %d", i);
                 return NULL;           
             }
             else if (shootResult > 0){
-                printf("salu2\n");
+                printf("me falta tiempo para sensibilizarme\n");
                 sleep(shootResult + 1 );
                 cpuProcess->monitor->metodos->shoot(cpuProcess->monitor, cpuProcess->processList[i]);
                 // monitor.shoot(cpuProcess->processList[i]);

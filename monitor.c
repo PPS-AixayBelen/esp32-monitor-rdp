@@ -1,10 +1,7 @@
 #include "monitor.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-
-void printNumero(monitor_o * monitor){
-    printf("Numero: %d \n",monitor->numero);
-}
 
 void printArray2(int size, int *array)
 {
@@ -36,21 +33,22 @@ int verifyMInvariants (monitor_o *monitor){
 }
 
 
-void signalPolitic (monitor_o *monitor){
+void signalPoliticMonitor (monitor_o *monitor){
 
-    // int t = 0;
-    // // int t = politica.signalPolitic (boolQuesWait); // Devuelve el indice de la transicion donde esta el hilo a despertar
-    //  if (t != -1) {
-    // //     quesWait.get (t).signal (); 
-    //         pthread_cond_signal(&(monitor->espera[t]));
-    //      return;
-    //  }
+    int t = monitor->politica->metodos->signalPolitic(monitor->politica, monitor->boolQuesWait); // Devuelve el indice de la transicion donde esta el hilo a despertar
+     if (t != -1) {
+    //     quesWait.get (t).signal (); 
+        pthread_cond_signal(&(monitor->espera[t]));
+        return;
+     }
 
-    // if (pn.ifEnd ()) { // Si la politica devuelve -1 es porque no pudo despertar a nadie, me fijo si tengo que terminar
-    //     end = true;
-    //     if (printDebug) System.out.println ("I'm final boss, bro");
-    //     finalSignalPoliticV2 ();
-    // }
+    if (monitor->rdp->metodos->ifEnd(monitor->rdp) ) { // Si la politica devuelve -1 es porque no pudo despertar a nadie, me fijo si tengo que terminar
+        printf("LA POLITICA DEVOLVIO -1\n");
+        for (int i = 0; i < 15; i++){
+            pthread_cond_broadcast(&(monitor->espera[t]));
+        }
+
+    }
         
     return;
 
@@ -99,7 +97,7 @@ int shoot (monitor_o *monitor, int index){
         else if (shootResult == 0){
                 
             monitor->boolQuesWait[index] = 0;
-            //signalPolitic(monitor);
+            signalPoliticMonitor(monitor);
             break;
         }
         else{
@@ -126,9 +124,8 @@ int shoot (monitor_o *monitor, int index){
 
 struct monitor_metodos monitorMetodos ={
 
-    .printNumero = printNumero,
     .verifyMInvariants = verifyMInvariants,
-    .signalPolitic = signalPolitic,
+    .signalPoliticMonitor = signalPoliticMonitor,
     .finalSignalPolitic = finalSignalPolitic,
     .shoot = shoot
 };
@@ -136,12 +133,13 @@ struct monitor_metodos monitorMetodos ={
 extern void new_monitor(monitor_o * p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int numberTransitions, int *boolQuesWait, rdp_o *rdp)
 {
     p_monitor->rdp = rdp;
-    p_monitor->numero = 2;
     p_monitor->mutex = mutex;
     p_monitor->espera = espera;
     p_monitor->numberTransitions = numberTransitions;
     p_monitor->boolQuesWait = boolQuesWait;
     p_monitor->end = 0;
     p_monitor->metodos = &monitorMetodos;
+    p_monitor->politica = (politica_o *)malloc(sizeof(politica_o));
+    new_politica(p_monitor->politica, rdp);
 }
 
