@@ -3,6 +3,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void finalSignalPolitic (monitor_o *monitor){
+ 
+     for (int i = 0; i < (monitor->numberTransitions); i++) {
+    //     quesWait.get (i).signal ();
+        pthread_cond_signal(&(monitor->espera[i]));     
+        monitor->boolQuesWait[i] = 0;
+    }
+
+}
+
+
 void printArray2(int size, int *array)
 {
     printf("{ ");
@@ -44,10 +55,12 @@ void signalPoliticMonitor (monitor_o *monitor){
 
     if (monitor->rdp->metodos->ifEnd(monitor->rdp) ) { // Si la politica devuelve -1 es porque no pudo despertar a nadie, me fijo si tengo que terminar
         printf("LA POLITICA DEVOLVIO -1\n");
+        monitor->end=1;
         for (int i = 0; i < 15; i++){
-            pthread_cond_broadcast(&(monitor->espera[t]));
+            pthread_cond_broadcast(&(monitor->espera[i]));
         }
 
+        finalSignalPolitic(monitor);
     }
         
     return;
@@ -55,15 +68,6 @@ void signalPoliticMonitor (monitor_o *monitor){
 }
 
 
-void finalSignalPolitic (monitor_o *monitor){
- 
-     for (int i = 0; i < (monitor->numberTransitions); i++) {
-    //     quesWait.get (i).signal ();
-        pthread_cond_signal(&(monitor->espera[i]));     
-        monitor->boolQuesWait[i] = 0;
-    }
-
-}
 
 
 

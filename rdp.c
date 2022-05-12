@@ -3,7 +3,7 @@
 #include "leerMatriz.h"
 #include "time.h"
 
-int print = 0;
+int print = 1;
 
 int isPos(rdp_o *rdp, int *index);
 void updateTimeStamps(rdp_o *rdp, int *oldSens);
@@ -23,9 +23,12 @@ extern void new_rdp(rdp_o *p_rdp)
 {
     p_rdp->estados = 16;
     p_rdp->transiciones = 15;
-    p_rdp->minTimeArrival = 2;
-    p_rdp->minTimeSrv1 = 50;
-    p_rdp->minTimeSrv2 = 50;
+    p_rdp->minTimeArrival = 4;
+    p_rdp->minTimeSrv1 = 1;
+    p_rdp->minTimeSrv2 = 1;
+    p_rdp->dataNumber = 3;
+    p_rdp->packetCounter = 0;
+
 
     for (int i = 0; i < p_rdp->transiciones; i++)
     {
@@ -205,11 +208,12 @@ int isPos(rdp_o *rdp, int *index)
     {
         rdp->M[i] = mPrima[i];
     }
-    printf("Array de marcado\n");
-    printArray(16, rdp->M);
+    // printf("Array de marcado\n");
+    // printArray(16, rdp->M);
     if (index[0] == 1)
     {
-        rdp->packetCounter++;
+        rdp->packetCounter = rdp->packetCounter+1;
+        printf("\n\n Nuevo paquete ahora tengo: %d\n\n",rdp->packetCounter);
     }
 
     updateTimeStamps(rdp, oldSens); // Le mando el vector de sensiblizado del marcado anterior
@@ -259,8 +263,8 @@ void updateTimeStamps(rdp_o *rdp, int *oldSens)
     //     printArray(rdp->transiciones, newSens);
     // }
 
-    printf("MATRIZ DE TRANSICIONES SENSIBILIZADAS\n");
-    printArray(rdp->transiciones, newSens);
+    // printf("MATRIZ DE TRANSICIONES SENSIBILIZADAS\n");
+    // printArray(rdp->transiciones, newSens);
     for (int i = 0; i < rdp->transiciones; i++)
     {
         if ((newSens[i] > 0) && (newSens[i] != oldSens[i]))
