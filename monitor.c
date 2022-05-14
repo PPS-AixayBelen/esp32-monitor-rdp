@@ -15,6 +15,16 @@ void logInvariantePlaza(int *vectorMarcado, int size)
     fclose(invPlaza);
 }
 
+void logInvarianteTransicion(int index)
+{
+    char *transicion[] =  {"T0", "T4", "T11", "T3", "T10", "TA", "T12", "T13", "T14", "T2", "T5", "T6", "T7", "T8", "T9"};
+    FILE * file = fopen("./test/InvariantesTransicion", "a+");
+
+    fputs(transicion[index],file);
+    fclose(file);
+
+}
+
 void finalSignalPolitic(monitor_o *monitor)
 {
 
@@ -94,6 +104,7 @@ int shoot(monitor_o *monitor, int index)
         else if (shootResult == 0)
         {
             logInvariantePlaza(&monitor->rdp->M[0],monitor->rdp->estados);
+            logInvarianteTransicion(index);
             monitor->boolQuesWait[index] = 0;
             signalPoliticMonitor(monitor);
             break;
