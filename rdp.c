@@ -22,17 +22,7 @@ struct rdp_metodos rdpMetodos = {
     .getSensitized = getSensitized,
     .ifEnd = ifEnd};
 
-void logInvariantePlaza(int *vectorMarcado, int size)
-{
-    FILE *invPlaza = fopen("./test/InvariantesPlaza", "a+");
 
-    for (int i = 0; i < size; i++)
-    {
-        fprintf(invPlaza, "%d ", vectorMarcado[i]);
-    }
-    fputs("\n", invPlaza);
-    fclose(invPlaza);
-}
 
 extern void new_rdp(rdp_o *p_rdp)
 {
@@ -219,8 +209,6 @@ int isPos(rdp_o *rdp, int *index)
     {
         rdp->M[i] = mPrima[i];
     }
-
-    logInvariantePlaza(&mPrima[0], rdp->estados);
 
     // printf("Array de marcado\n");
     // printArray(16, rdp->M);

@@ -3,6 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void logInvariantePlaza(int *vectorMarcado, int size)
+{
+    FILE *invPlaza = fopen("./test/InvariantesPlaza", "a+");
+
+    for (int i = 0; i < size; i++)
+    {
+        fprintf(invPlaza, "%d ", vectorMarcado[i]);
+    }
+    fputs("\n", invPlaza);
+    fclose(invPlaza);
+}
+
 void finalSignalPolitic(monitor_o *monitor)
 {
 
@@ -81,7 +93,7 @@ int shoot(monitor_o *monitor, int index)
         }
         else if (shootResult == 0)
         {
-
+            logInvariantePlaza(&monitor->rdp->M[0],monitor->rdp->estados);
             monitor->boolQuesWait[index] = 0;
             signalPoliticMonitor(monitor);
             break;

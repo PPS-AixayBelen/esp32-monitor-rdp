@@ -15,12 +15,10 @@ int main()
 
     pthread_attr_init(&atrib);
     pthread_attr_setscope(&atrib, PTHREAD_SCOPE_SYSTEM);
-
     pthread_attr_setschedpolicy(&atrib, SCHED_OTHER);
+    
     monitor_o mymonitor;
     rdp_o rdp;
-    pthread_attr_setscope(&atrib, PTHREAD_SCOPE_SYSTEM);
-
     monitor_o *monitor = &mymonitor;
     cpuProcess_o tShooter[15];
     cpuProcess_o t0Shooter;
