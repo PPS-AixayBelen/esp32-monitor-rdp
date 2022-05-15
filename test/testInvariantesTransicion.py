@@ -2,7 +2,7 @@ import fileinput
 import re
 import io
 
-file = open("./test/InvariantesTransicion","r")
+file = open("./test/InvarianteTransicion","r")
 buffer = file.read()
 
 #print(buffer)

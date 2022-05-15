@@ -15,13 +15,18 @@ void logInvariantePlaza(int *vectorMarcado, int size)
     fclose(invPlaza);
 }
 
-void logInvarianteTransicion(int index)
+void logInvarianteTransicion(monitor_o *monitor, int index)
 {
     char *transicion[] =  {"T0", "T4", "T11", "T3", "T10", "TA", "T12", "T13", "T14", "T2", "T5", "T6", "T7", "T8", "T9"};
-    FILE * file = fopen("./test/InvariantesTransicion", "a+");
-
-    fputs(transicion[index],file);
-    fclose(file);
+    if(monitor->logInvTransicion == NULL)
+    {
+        monitor->logInvTransicion = (char*) malloc(sizeof(char)*strlen(transicion[index]));
+        strcpy(monitor->logInvTransicion,transicion[index]);
+    }else
+    {
+        monitor->logInvTransicion = (char *) realloc(monitor->logInvTransicion,sizeof(char) * (strlen(monitor->logInvTransicion) + strlen(transicion[index]))); 
+        strcat(monitor->logInvTransicion,transicion[index]);
+    }
 
 }
 
@@ -104,7 +109,7 @@ int shoot(monitor_o *monitor, int index)
         else if (shootResult == 0)
         {
             logInvariantePlaza(&monitor->rdp->M[0],monitor->rdp->estados);
-            logInvarianteTransicion(index);
+            logInvarianteTransicion(monitor,index);
             monitor->boolQuesWait[index] = 0;
             signalPoliticMonitor(monitor);
             break;
@@ -131,6 +136,7 @@ extern void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_con
     p_monitor->rdp = rdp;
     p_monitor->mutex = mutex;
     p_monitor->espera = espera;
+    p_monitor->logInvTransicion = NULL;
     p_monitor->numberTransitions = numberTransitions;
     p_monitor->boolQuesWait = boolQuesWait;
     p_monitor->end = 0;

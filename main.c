@@ -9,7 +9,7 @@
 
 int main()
 {
-
+    
     pthread_attr_t atrib;
     pthread_t c[15];
 
@@ -82,5 +82,8 @@ int main()
     {
         pthread_join(c[i], NULL);
     }
+    FILE * invTransicionFile = fopen("./test/InvarianteTransicion","w+");
+    fputs(monitor->logInvTransicion,invTransicionFile);
+    fclose(invTransicionFile);
     printf("\nTERMINEEEEEE\n");
 }
