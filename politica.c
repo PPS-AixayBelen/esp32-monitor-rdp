@@ -17,7 +17,7 @@ int signalPolitic (politica_o *politica, int *boolQuesWait){
             return politica->addBuffer[1];
         }
     }
-    for (int i = 0; i < 15; i++){ //desperta al primero que encuentre dormido y que no sean t1 ni t8
+    for (int i = 0; i < TRANSITIONS; i++){ //desperta al primero que encuentre dormido y que no sean t1 ni t8
         if(aux[i] == 1 && boolQuesWait[i] && i !=5 && i != 13){
             return i;
         }
