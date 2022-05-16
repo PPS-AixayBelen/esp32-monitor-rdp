@@ -1,5 +1,5 @@
-//Defining _REENTRANT causes the compiler to use thread safe (i.e. re-entrant) 
-//versions of several functions in the C library.
+// Defining _REENTRANT causes the compiler to use thread safe (i.e. re-entrant)
+// versions of several functions in the C library.
 #define _REENTRANT
 
 #include "cpuProcess.h"
@@ -12,20 +12,18 @@
 #include <stdlib.h>
 
 
-int main(){
-
+int main()
+{
+    
     pthread_attr_t atrib;
     pthread_t c[15];
 
     pthread_attr_init(&atrib);
     pthread_attr_setscope(&atrib, PTHREAD_SCOPE_SYSTEM);
-
-
     pthread_attr_setschedpolicy(&atrib, SCHED_RR);
+    
     monitor_o mymonitor;
     rdp_o rdp;
-    pthread_attr_setscope(&atrib, PTHREAD_SCOPE_SYSTEM);
-
     monitor_o *monitor = &mymonitor;
     cpuProcess_o tShooter[TRANSITIONS];
 
@@ -47,18 +45,18 @@ int main(){
     int shootSequence14[1]={8};     //T14
     int shootSequence15[1]={10};    //T5
 
-    shootArray [0] = shootSequence1;
-    shootArray [1] = shootSequence2;
-    shootArray [2] = shootSequence3;
+    shootArray[0] = shootSequence1;
+    shootArray[1] = shootSequence2;
+    shootArray[2] = shootSequence3;
     shootArray[3] = shootSequence4;
     shootArray[4] = shootSequence5;
-    shootArray [5] = shootSequence6;
-    shootArray [6] = shootSequence7;
-    shootArray [7] = shootSequence8;
+    shootArray[5] = shootSequence6;
+    shootArray[6] = shootSequence7;
+    shootArray[7] = shootSequence8;
     shootArray[8] = shootSequence9;
     shootArray[9] = shootSequence10;
-    shootArray [10] = shootSequence11;
-    shootArray [11] = shootSequence12;
+    shootArray[10] = shootSequence11;
+    shootArray[11] = shootSequence12;
     shootArray[12] = shootSequence13;
     shootArray[13] = shootSequence14;
     shootArray[14] = shootSequence15;
@@ -68,15 +66,16 @@ int main(){
     int boolQuesWait[TRANSITIONS] = {0};
 
     pthread_mutex_init(&mutex, NULL);
-    for (int i = 0; i < 15; i++){
+    for (int i = 0; i < 15; i++)
+    {
         pthread_cond_init(&espera[i], NULL);
     }
     new_rdp(&rdp);
     new_monitor(&mymonitor, mutex, espera, TRANSITIONS, boolQuesWait, &rdp);
 
-    for ( int i = 0;i<15;i++)
+    for (int i = 0; i < TRANSITIONS; i++)
     {
-        new_cpuProcess(&tShooter[i],shootArray[i], 1, monitor);
+        new_cpuProcess(&tShooter[i], shootArray[i], 1, monitor);
     }
 
     for (int i = 0; i < TRANSITIONS; i++)
@@ -90,4 +89,3 @@ int main(){
     free(monitor->politica);
 
 }
-

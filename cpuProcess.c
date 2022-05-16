@@ -27,24 +27,21 @@ void *run(cpuProcess_o *cpuProcess){
                 sleep(shootResult + 1 );
                 cpuProcess->monitor->metodos->shoot(cpuProcess->monitor, cpuProcess->processList[i]);
             }
-            else{
+            else
+            {
             }
         }
 
     }
 }
 
-struct cpuProcess_metodos cpuMetodos ={
-    .run = run
-};
+struct cpuProcess_metodos cpuMetodos = {
+    .run = run};
 
-extern void new_cpuProcess(cpuProcess_o * p_cpuProcess, int *processList, int processNum, monitor_o *monitor)
+extern void new_cpuProcess(cpuProcess_o *p_cpuProcess, int *processList, int processNum, monitor_o *monitor)
 {
     p_cpuProcess->monitor = monitor;
     p_cpuProcess->processNum = processNum;
     p_cpuProcess->metodos = &cpuMetodos;
     p_cpuProcess->processList = processList;
-
 }
-
-

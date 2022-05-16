@@ -1,24 +1,28 @@
 #include "rdp.h"
-#include <stdio.h>
 #include "leerMatriz.h"
 #include "time.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 int isPos(rdp_o *rdp, int *index);
 void updateTimeStamps(rdp_o *rdp, int *oldSens);
 void getSensitized(rdp_o *rdp);
 int ifEnd(rdp_o *rdp);
+
 void printArray(int size, int array[]);
-
-
+void logInvariantePlaza(int *vectorMarcado, int size);
 
 struct rdp_metodos rdpMetodos = {
 
     .isPos = isPos,
     .updateTimeStamps = updateTimeStamps,
     .getSensitized = getSensitized,
-    .ifEnd = ifEnd
-};
+    .ifEnd = ifEnd};
+
+
 
 
 
@@ -71,6 +75,7 @@ int isPos(rdp_o *rdp, int *index)
 
     char *M_name[PLACES] = {"Active", "Active_2", "CPU_buffer", "CPU_buffer 2", "CPU_ON", "CPU_ON_2", "Idle", "Idle_2", "P0", "P1", "P13", "P6", "Power_up", "Power_up_2", "Stand_by", "Stand_by_2"};
 
+
     for (int m = 0; m < TRANSITIONS; m++)
     {
         rdp->E[m] = 1;
@@ -120,19 +125,18 @@ int isPos(rdp_o *rdp, int *index)
             aux[m] = 0; // Si no pongo el else, quedan los unos de la operacion anterior
     }
 
-
     int zeroCounter = 0; // Esto es para ver que lo que quiero y puedo disparar sea diferente de 0
     for (int m = 0; m < TRANSITIONS; m++)
     {
         if (aux[m] != 0)
             zeroCounter++;
     }
+  
     if (zeroCounter == 0){ 
         if (DEBUG)
             printf("vector de disparo vacio o insensibilizado\n");
         return -1;
     }
-        
 
     int aux2[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -162,7 +166,6 @@ int isPos(rdp_o *rdp, int *index)
             return -1;
         }
     }
-
 
     time_t shootTime;
 
@@ -197,11 +200,12 @@ int isPos(rdp_o *rdp, int *index)
                 {
                     if (DEBUG)
                         printf("%s %d %s\n", "Quise disparar T", i, " y estoy fuera del intervalo de tiempo");
-                    return (unsigned int) transitionTime - shootTime ;
+                    return (unsigned int)transitionTime - shootTime;
                 }
             }
         }
     }
+
 
     for (int i = 0; i < PLACES; i++)
     {
@@ -264,7 +268,6 @@ void updateTimeStamps(rdp_o *rdp, int *oldSens)
     rdp->metodos->getSensitized(rdp);
 
     // int newSens[TRANSITIONS];
-
 
     // for (int i = 0; i < TRANSITIONS; i++)
     // {

@@ -5,25 +5,25 @@
 
 typedef struct politica politica_o;
 
+struct politica_metodos
+{
 
-struct politica_metodos{
-
-    int  (*signalPolitic) (politica_o *, int *boolQuesWait);
+    int (*signalPolitic)(politica_o *, int *boolQuesWait);
 };
 
-struct politica{
-   
+struct politica
+{
 
     rdp_o *rdp;
     int *listBuff;
     int *addBuffer;
-    int *markVector;    
+    int *markVector;
 
-    const struct politica_metodos * metodos;
+    const struct politica_metodos *metodos;
 };
 
-//Funciones
+// Funciones
 
 void new_politica(politica_o *p_politica, rdp_o *rdp);
 
-#endif 
+#endif
