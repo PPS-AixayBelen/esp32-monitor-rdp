@@ -41,15 +41,7 @@ void finalSignalPolitic(monitor_o *monitor)
     }
 }
 
-void printArray2(int size, int *array)
-{
-    printf("{ ");
-    for (int i; i < size; i++)
-    {
-        printf("%d ", array[i]);
-    }
-    printf("}\n");
-}
+
 
 void signalPoliticMonitor(monitor_o *monitor)
 {
@@ -57,17 +49,16 @@ void signalPoliticMonitor(monitor_o *monitor)
     int t = monitor->politica->metodos->signalPolitic(monitor->politica, monitor->boolQuesWait); // Devuelve el indice de la transicion donde esta el hilo a despertar
     if (t != -1)
     {
-        //     quesWait.get (t).signal ();
         pthread_cond_signal(&(monitor->espera[t]));
         return;
     }
 
-    if (monitor->rdp->metodos->ifEnd(monitor->rdp))
-    { // Si la politica devuelve -1 es porque no pudo despertar a nadie, me fijo si tengo que terminar
-        printf("LA POLITICA DEVOLVIO -1\n");
-        monitor->end = 1;
-        for (int i = 0; i < 15; i++)
-        {
+
+    if (monitor->rdp->metodos->ifEnd(monitor->rdp) ) { // Si la politica devuelve -1 es porque no pudo despertar a nadie, me fijo si tengo que terminar
+        if(DEBUG)
+            printf("No se pudo despertar a ningun hilo\n");
+        monitor->end=1;
+        for (int i = 0; i < TRANSITIONS; i++){
             pthread_cond_broadcast(&(monitor->espera[i]));
         }
 
@@ -102,7 +93,8 @@ int shoot(monitor_o *monitor, int index)
                 pthread_mutex_unlock(&(monitor->mutex));
                 return -1;
             }
-            printf("me fui a mimir disparando %d, por shootResult = %d\n", index, shootResult);
+            if(DEBUG)
+                printf("me fui a dormir disparando %d, con shootResult = %d\n", index, shootResult);
             monitor->boolQuesWait[index] = 1;
             pthread_cond_wait(&(monitor->espera[index]), &(monitor->mutex));
         }

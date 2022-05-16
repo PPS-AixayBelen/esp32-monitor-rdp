@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define TRANSITIONS 15
+#define PLACES 16
+#define BUFFERS 2
+#define DEBUG 1
+#define PRODUCTOR 1
 typedef struct rdp rdp_o;
 
 struct rdp_metodos
@@ -16,29 +21,25 @@ struct rdp_metodos
     int (*ifEnd)(rdp_o *);
 };
 
-struct rdp
-{
+struct rdp{
+   
+    int M[PLACES]; 
+    int B[TRANSITIONS]; 
+    int Ipos[PLACES][TRANSITIONS]; 
+    int Ineg[PLACES][TRANSITIONS]; 
+    int I[PLACES][TRANSITIONS];  
+    int H[TRANSITIONS][PLACES]; 
+    int E[TRANSITIONS]; 
+    int Sensitized[TRANSITIONS]; 
 
-    int M[16]; //
-    int B[15];
-    int Ipos[16][15]; //
-    int Ineg[16][15]; //
-    int I[16][15];    //
-    int H[15][16];    //
-    int E[15];        //
-    int Sensitized[15];
+    time_t sensitizedTime[TRANSITIONS];
+    int minTimeArrival; 
+    int minTimeSrv1; 
+    int minTimeSrv2; 
+    int isBuffer[BUFFERS];
+    int isGenTransition[PRODUCTOR];
+    int isAddBuffer[BUFFERS];
 
-    time_t sensitizedTime[15];
-    int minTimeArrival;
-    int minTimeSrv1;
-    int minTimeSrv2;
-    int useBuffers[4];
-    int isBuffer[2];
-    int isGenTransition[1];
-    int isAddBuffer[2];
-
-    int estados;
-    int transiciones;
     int dataNumber;
     int packetCounter; // Es boolean
     void *invPlaza;

@@ -6,13 +6,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-int print = 1;
 
 int isPos(rdp_o *rdp, int *index);
 void updateTimeStamps(rdp_o *rdp, int *oldSens);
 void getSensitized(rdp_o *rdp);
 int ifEnd(rdp_o *rdp);
-void printArray(int size, int *array);
+
+void printArray(int size, int array[]);
 void logInvariantePlaza(int *vectorMarcado, int size);
 
 struct rdp_metodos rdpMetodos = {
@@ -24,64 +24,63 @@ struct rdp_metodos rdpMetodos = {
 
 
 
+
+
+
 extern void new_rdp(rdp_o *p_rdp)
 {
-    p_rdp->estados = 16;
-    p_rdp->transiciones = 15;
     p_rdp->minTimeArrival = 4;
     p_rdp->minTimeSrv1 = 1;
     p_rdp->minTimeSrv2 = 1;
     p_rdp->dataNumber = 3;
     p_rdp->packetCounter = 0;
 
-    for (int i = 0; i < p_rdp->transiciones; i++)
+
+    for (int i = 0; i < TRANSITIONS; i++)
     {
         p_rdp->B[i] = 0;
         p_rdp->E[i] = 0;
     }
 
     char M[] = "0 0 0 0 0 0 1 1 1 0 0 0 0 0 1 1";
-    cargar_vector(16, p_rdp->M, M);
-    leer_matriz(16, 15, p_rdp->Ineg[0], "Ineg");
-    leer_matriz(16, 15, p_rdp->Ipos[0], "Ipos");
-    leer_matriz(16, 15, p_rdp->I[0], "Imatriz");
-    leer_matriz(16, 15, p_rdp->H[0], "H");
+    cargar_vector(PLACES, p_rdp->M, M);
+    leer_matriz(PLACES, TRANSITIONS, p_rdp->Ineg[0], "Ineg");
+    leer_matriz(PLACES, TRANSITIONS, p_rdp->Ipos[0], "Ipos");
+    leer_matriz(PLACES, TRANSITIONS, p_rdp->I[0], "Imatriz");
+    leer_matriz(PLACES, TRANSITIONS, p_rdp->H[0], "H");
 
-    // for(int i = 0;i<16;i++){
-    // for(int j = 0; j<15;j++){
-    //     printf("%d ",p_rdp->Ineg[i][j]);
-    // }
-    // printf("\n");
-    // }
-
-    char userBuffer[] = "5 13 9 14";
-    cargar_vector(4, p_rdp->useBuffers, userBuffer);
 
     char isBuffer[] = "2 3";
-    cargar_vector(2, p_rdp->isBuffer, isBuffer);
+    cargar_vector(BUFFERS, p_rdp->isBuffer, isBuffer);
 
     p_rdp->isGenTransition[0] = 0;
 
     char isAddBuffer[] = "5 13";
-    cargar_vector(2, p_rdp->isAddBuffer, isAddBuffer);
+    cargar_vector(BUFFERS, p_rdp->isAddBuffer, isAddBuffer);
 
     for (int i = 0; i < 15; i++)
     {
         time(&p_rdp->sensitizedTime[i]);
     }
+    for(int i = 0; i < TRANSITIONS; i++)
+        p_rdp->Sensitized[i] = 0;
 
     p_rdp->metodos = &rdpMetodos;
 }
 
 int isPos(rdp_o *rdp, int *index)
 {
-    char *M_name[] = {"Active", "Active_2", "CPU_buffer", "CPU_buffer 2", "CPU_ON", "CPU_ON_2", "Idle", "Idle_2", "P0", "P1", "P13", "P6", "Power_up", "Power_up_2", "Stand_by", "Stand_by_2"};
 
-    for (int m = 0; m < rdp->transiciones; m++)
+    int temp;
+
+    char *M_name[PLACES] = {"Active", "Active_2", "CPU_buffer", "CPU_buffer 2", "CPU_ON", "CPU_ON_2", "Idle", "Idle_2", "P0", "P1", "P13", "P6", "Power_up", "Power_up_2", "Stand_by", "Stand_by_2"};
+
+
+    for (int m = 0; m < TRANSITIONS; m++)
     {
         rdp->E[m] = 1;
 
-        for (int n = 0; n < rdp->estados; n++)
+        for (int n = 0; n < PLACES; n++)
         {
             if (rdp->M[n] - rdp->Ineg[n][m] < 0)
             {
@@ -91,34 +90,34 @@ int isPos(rdp_o *rdp, int *index)
         }
     }
 
-    // Esto para que era?
     if (rdp->packetCounter == rdp->dataNumber)
         rdp->E[0] = 0;
 
-    if (rdp->M[2] >= 10)
+    if (rdp->M[2] >= 10) // Limite buffer 1
         rdp->E[5] = 0;
 
     if (rdp->M[3] >= 10) // Limite buffer 2
         rdp->E[13] = 0;
 
-    int temp;
 
     rdp->metodos->getSensitized(rdp);
-    int aux[rdp->transiciones];
+    int aux[TRANSITIONS];
 
-    for (int i = 0; i < rdp->transiciones; i++)
+    for (int i = 0; i < TRANSITIONS; i++)
     {
         aux[i] = rdp->Sensitized[i];
     }
 
-    int oldSens[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // se usa despues para actualizar timestamps
+    int oldSens[TRANSITIONS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // se usa despues para actualizar timestamps
 
-    for (int i = 0; i < rdp->transiciones; i++)
+
+    for (int i = 0; i < TRANSITIONS; i++)
     {
         oldSens[i] = aux[i];
     }
 
-    for (int m = 0; m < rdp->transiciones; m++)
+
+    for (int m = 0; m < TRANSITIONS; m++)
     {
         if (aux[m] * index[m] > 0)
             aux[m] = 1; // sigma and Ex
@@ -127,41 +126,43 @@ int isPos(rdp_o *rdp, int *index)
     }
 
     int zeroCounter = 0; // Esto es para ver que lo que quiero y puedo disparar sea diferente de 0
-    for (int m = 0; m < rdp->transiciones; m++)
+    for (int m = 0; m < TRANSITIONS; m++)
     {
         if (aux[m] != 0)
             zeroCounter++;
     }
-    if (zeroCounter == 0)
-    {
-        printf("vector de disparo vacio o insensibilizado\n");
+  
+    if (zeroCounter == 0){ 
+        if (DEBUG)
+            printf("vector de disparo vacio o insensibilizado\n");
         return -1;
     }
 
     int aux2[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    for (int n = 0; n < rdp->estados; n++)
+    for (int n = 0; n < PLACES; n++)
     {
-        for (int m = 0; m < rdp->transiciones; m++)
+        for (int m = 0; m < TRANSITIONS; m++)
         {
             temp = rdp->I[n][m] * aux[m];
             aux2[n] = aux2[n] + temp;
         }
     }
 
-    int mPrima[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int mPrima[PLACES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    if (print)
+    if (DEBUG)
         printf("Nuevo marcado: \n");
-    for (int n = 0; n < rdp->estados; n++)
+    for (int n = 0; n < PLACES; n++)
     {                                    // Si algun numero del nuevo vector de marcado es negativo, no puedo dispararla
         mPrima[n] = rdp->M[n] + aux2[n]; // Sumo para obtener el nuevo vector de marcado
-        if (print)
+        if (DEBUG)
             printf("%d %s \n", mPrima[n], M_name[n]);
 
         if (mPrima[n] < 0)
         {
-            printf("la transicion no se puede disparar, marcado resultante\n");
+            if(DEBUG)
+                printf("la transicion no se puede disparar, marcado resultante negativo\n");
             return -1;
         }
     }
@@ -172,7 +173,7 @@ int isPos(rdp_o *rdp, int *index)
 
     time_t transitionTime = 0;
 
-    for (int i = 0; i < rdp->transiciones; i++)
+    for (int i = 0; i < TRANSITIONS; i++)
     {
         if (index[i] > 0)
         {
@@ -180,7 +181,7 @@ int isPos(rdp_o *rdp, int *index)
             {
                 switch (i)
                 {
-                case 0: // TODO: Esto tiene sentido?
+                case 0: 
                     transitionTime = rdp->sensitizedTime[i] + rdp->minTimeArrival;
                     break;
                 case 3:
@@ -190,46 +191,63 @@ int isPos(rdp_o *rdp, int *index)
                     transitionTime = rdp->sensitizedTime[i] + rdp->minTimeSrv2;
                     break;
                 }
-                // TODO: MIRAAAAAR
+                
                 if ((shootTime > transitionTime) || (shootTime == transitionTime))
                 {                                  // si el tiempo actual es mayor que el de sensibilizado + minTime
                     time(&rdp->sensitizedTime[i]); // actualizo el tiempo de sensibilizado "para que vuelva a 0" (?
                 }
                 else
                 {
-                    if (print)
+                    if (DEBUG)
                         printf("%s %d %s\n", "Quise disparar T", i, " y estoy fuera del intervalo de tiempo");
                     return (unsigned int)transitionTime - shootTime;
                 }
             }
         }
     }
-    char *number;
-    for (int i = 0; i < rdp->estados; i++)
+
+
+    for (int i = 0; i < PLACES; i++)
     {
         rdp->M[i] = mPrima[i];
     }
 
-    // printf("Array de marcado\n");
-    // printArray(16, rdp->M);
+
     if (index[0] == 1)
     {
-        rdp->packetCounter = rdp->packetCounter + 1;
-        printf("\n\n Nuevo paquete ahora tengo: %d\n\n", rdp->packetCounter);
+        rdp->packetCounter = rdp->packetCounter+1;
+        if (DEBUG)
+            printf("\nNuevo paquete ahora tengo: %d\n",rdp->packetCounter);
     }
 
     updateTimeStamps(rdp, oldSens); // Le mando el vector de sensiblizado del marcado anterior
 
+    if (DEBUG)
+    {
+        printf("Viejo sensiblizado : ");
+        printArray(TRANSITIONS,  oldSens);
+        printf("Nuevo sensiblizado : ");
+        printArray(TRANSITIONS, rdp->Sensitized);
+
+    }
+
+
+
     return 0;
 }
 
+
+
 void updateTimeStamps(rdp_o *rdp, int *oldSens)
 {
-    for (int m = 0; m < rdp->transiciones; m++)
+
+
+    
+    for (int m = 0; m < TRANSITIONS; m++)
     {
         rdp->E[m] = 1;
 
-        for (int n = 0; n < rdp->estados; n++)
+        for (int n = 0; n < PLACES; n++)
         {
             if (rdp->M[n] - rdp->Ineg[n][m] < 0)
             {
@@ -249,37 +267,31 @@ void updateTimeStamps(rdp_o *rdp, int *oldSens)
 
     rdp->metodos->getSensitized(rdp);
 
-    int newSens[rdp->transiciones];
+    // int newSens[TRANSITIONS];
 
-    for (int i = 0; i < rdp->transiciones; i++)
-    {
-        newSens[i] = rdp->Sensitized[i];
-    }
-
-    // if (print)
+    // for (int i = 0; i < TRANSITIONS; i++)
     // {
-    //     printf("Viejo sensiblizado: ");
-    //     printArray(rdp->transiciones, oldSens);
-    //     printf("Nuevo sensiblizado: ");
-    //     printArray(rdp->transiciones, newSens);
+    //     newSens[i] = rdp->Sensitized[i];
     // }
 
-    // printf("MATRIZ DE TRANSICIONES SENSIBILIZADAS\n");
-    // printArray(rdp->transiciones, newSens);
-    for (int i = 0; i < rdp->transiciones; i++)
+
+    for (int i = 0; i < TRANSITIONS; i++)
     {
-        if ((newSens[i] > 0) && (newSens[i] != oldSens[i]))
+        // if ((newSens[i] > 0) && (newSens[i] != oldSens[i]))
+        if ((rdp->Sensitized[i] > 0) && (rdp->Sensitized[i] != oldSens[i]))
         {
             time(&rdp->sensitizedTime[i]);
         }
     }
+
+
 }
 
-void printArray(int size, int *array)
+void printArray(int size, int array[])
 {
     printf("{ ");
-    for (int i; i < size; i++)
-    {
+    for (int i = 0; i < size; i++)
+    {   
         printf("%d ", array[i]);
     }
     printf("}\n");
@@ -292,10 +304,10 @@ void getSensitized(rdp_o *rdp)
     int aux[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     // Calculo B (vector de desensibilizado)
-    for (int m = 0; m < rdp->transiciones; m++)
+    for (int m = 0; m < TRANSITIONS; m++)
     {
         rdp->B[m] = 0;
-        for (int n = 0; n < rdp->estados; n++)
+        for (int n = 0; n < PLACES; n++)
         { // Si algun numero del nuevo vector de marcado es = 1, no puedo dispararla
             // temp = H[m][i] * Q[i];    // Sumo para obtener el nuevo vector de desensibilizado
             temp = rdp->H[m][n] * rdp->M[n];
@@ -311,7 +323,7 @@ void getSensitized(rdp_o *rdp)
         }
     }
 
-    for (int m = 0; m < rdp->transiciones; m++)
+    for (int m = 0; m < TRANSITIONS; m++)
     {
         if (rdp->B[m] * rdp->E[m] > 0)
             aux[m] = 1; // B and E
@@ -319,7 +331,7 @@ void getSensitized(rdp_o *rdp)
             aux[m] = 0; // Si no pongo el else, quedan los unos de la operacion anterior
     }
 
-    for (int i = 0; i < rdp->transiciones; i++)
+    for (int i = 0; i < TRANSITIONS; i++)
     {
         rdp->Sensitized[i] = aux[i];
     }
@@ -327,8 +339,8 @@ void getSensitized(rdp_o *rdp)
 
 int ifEnd(rdp_o *rdp)
 {
-    int Minitial[] = {0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1};
-    for (int n = 0; n < rdp->estados; n++)
+    int Minitial[PLACES] = {0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1};
+    for (int n = 0; n < PLACES; n++)
     {
         if (rdp->M[n] != Minitial[n])
             return 0;
