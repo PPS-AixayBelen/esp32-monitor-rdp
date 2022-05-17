@@ -86,6 +86,11 @@ int main()
     }
     if (DEBUG)
         printf("\nFinalizo la ejecucion\n");
-    free(monitor->politica);
+        
+    FILE * invTransicionFile = fopen("./test/InvarianteTransicion","w+");
+    fputs(monitor->logInvTransicion,invTransicionFile);
+    fclose(invTransicionFile);
 
+    free(monitor->politica);
+    free(monitor->logInvTransicion);
 }

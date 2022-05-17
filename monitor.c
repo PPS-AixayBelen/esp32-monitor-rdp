@@ -100,7 +100,7 @@ int shoot(monitor_o *monitor, int index)
         }
         else if (shootResult == 0)
         {
-            logInvariantePlaza(&monitor->rdp->M[0],monitor->rdp->estados);
+            logInvariantePlaza(&monitor->rdp->M[0], PLACES);
             logInvarianteTransicion(monitor,index);
             monitor->boolQuesWait[index] = 0;
             signalPoliticMonitor(monitor);

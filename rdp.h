@@ -8,7 +8,7 @@
 #define TRANSITIONS 15
 #define PLACES 16
 #define BUFFERS 2
-#define DEBUG 1
+#define DEBUG 0
 #define PRODUCTOR 1
 typedef struct rdp rdp_o;
 

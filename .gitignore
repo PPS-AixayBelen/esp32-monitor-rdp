@@ -1,3 +1,5 @@
 a.out
 .vscode
 .gdb_history
+test/InvarianteTransicion
+test/InvariantesPlaza
