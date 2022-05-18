@@ -71,7 +71,7 @@ int main()
         pthread_cond_init(&espera[i], NULL);
     }
     new_rdp(&rdp);
-    new_monitor(&mymonitor, mutex, espera, TRANSITIONS, boolQuesWait, &rdp);
+    new_monitor(&mymonitor, mutex, espera, boolQuesWait, &rdp);
 
     for (int i = 0; i < TRANSITIONS; i++)
     {

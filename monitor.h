@@ -21,7 +21,6 @@ struct monitor_metodos
 struct monitor
 {
 
-    int numberTransitions;
     pthread_mutex_t mutex; 
     pthread_cond_t *espera; 
     int *boolQuesWait; //0 = no esta esperando , 1 = esta esperando
@@ -32,6 +31,6 @@ struct monitor
     const struct monitor_metodos *metodos;
 };
 
-void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int numberTransitions, int *boolQuesWait, rdp_o *rdp);
+void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp);
 
 #endif

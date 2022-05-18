@@ -6,14 +6,14 @@ int signalPolitic(politica_o *politica, int *boolQuesWait)
 {
 
     int *aux = politica->rdp->Sensitized;
-    if (boolQuesWait[politica->addBuffer[0]] && boolQuesWait[politica->addBuffer[1]] && aux[politica->addBuffer[0]] == 1)
-    { // si t1 y t8 estan dormidas y esta sensibilizada t1
+    if (boolQuesWait[politica->addBuffer[0]] && boolQuesWait[politica->addBuffer[1]] && aux[politica->addBuffer[0]] == 1) // si t1 y t8 estan dormidas y esta sensibilizada t1
+    { 
         politica->markVector = politica->rdp->M;
-        if (politica->markVector[politica->listBuff[0]] < politica->markVector[politica->listBuff[1]])
+        if (politica->markVector[politica->listBuff[0]] < politica->markVector[politica->listBuff[1]]) //si el buffer 1 tiene menos cosas que el buffer 2, usa el buffer 1 
         {
             return politica->addBuffer[0];
         }
-        else if (politica->markVector[politica->listBuff[0]] >= politica->markVector[politica->listBuff[1]])
+        else if (politica->markVector[politica->listBuff[0]] >= politica->markVector[politica->listBuff[1]]) // sino, usa el buffer 1
         {
             return politica->addBuffer[1];
         }

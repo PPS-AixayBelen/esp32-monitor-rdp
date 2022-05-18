@@ -30,12 +30,11 @@ void logInvarianteTransicion(monitor_o *monitor, int index)
 
 }
 
-void finalSignalPolitic(monitor_o *monitor)
+void finalSignalPolitic(monitor_o *monitor) // Despierta a todos los hilos para terminar la ejecucion
 {
 
-    for (int i = 0; i < (monitor->numberTransitions); i++)
+    for (int i = 0; i < TRANSITIONS; i++)
     {
-        //     quesWait.get (i).signal ();
         pthread_cond_signal(&(monitor->espera[i]));
         monitor->boolQuesWait[i] = 0;
     }
@@ -43,7 +42,7 @@ void finalSignalPolitic(monitor_o *monitor)
 
 
 
-void signalPoliticMonitor(monitor_o *monitor)
+void signalPoliticMonitor(monitor_o *monitor) //define que hilo tiene que despertar y lo despierta
 {
 
     int t = monitor->politica->metodos->signalPolitic(monitor->politica, monitor->boolQuesWait); // Devuelve el indice de la transicion donde esta el hilo a despertar
@@ -58,52 +57,51 @@ void signalPoliticMonitor(monitor_o *monitor)
         if(DEBUG)
             printf("No se pudo despertar a ningun hilo\n");
         monitor->end=1;
-        for (int i = 0; i < TRANSITIONS; i++){
-            pthread_cond_broadcast(&(monitor->espera[i]));
-        }
+        // for (int i = 0; i < TRANSITIONS; i++){
+        //     pthread_cond_broadcast(&(monitor->espera[i])); //por si algun hilo quedo dormido
+        // }
 
-        finalSignalPolitic(monitor);
+        finalSignalPolitic(monitor); 
     }
 
     return;
 }
 
-int shoot(monitor_o *monitor, int index)
+int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devuelve 0 si pudo hacerla 
 {
 
     pthread_mutex_lock(&(monitor->mutex));
 
-    int numberTransitions = monitor->numberTransitions;
-    int shoot[numberTransitions];
-    for (int i = 0; i < monitor->numberTransitions; i++)
+    int shoot[TRANSITIONS];
+    for (int i = 0; i < TRANSITIONS; i++)
     {
         shoot[i] = 0;
     }
-    shoot[index] = 1;
+    shoot[index] = 1; // el vector de diisparo tiene un 1 solamente en la transicion que se va a disparar 
     int shootResult = -1;
 
     while (1)
     {
-        shootResult = monitor->rdp->metodos->isPos(monitor->rdp, shoot);
+        shootResult = monitor->rdp->metodos->isPos(monitor->rdp, shoot); //si el disparo es posible, lo realiza
 
-        if (shootResult < 0)
+        if (shootResult < 0) //si devolvio -1, el hilo deberia irse a dormir 
         {
-            if (monitor->end)
+            if (monitor->end) //si ya se llego al final de la ejecucion, no se puede disparar nada
             {
                 pthread_mutex_unlock(&(monitor->mutex));
                 return -1;
             }
             if(DEBUG)
                 printf("me fui a dormir disparando %d, con shootResult = %d\n", index, shootResult);
-            monitor->boolQuesWait[index] = 1;
+            monitor->boolQuesWait[index] = 1; //se setea un 1 en la transicion en la que se durmio el hilo
             pthread_cond_wait(&(monitor->espera[index]), &(monitor->mutex));
         }
         else if (shootResult == 0)
         {
             logInvariantePlaza(&monitor->rdp->M[0], PLACES);
             logInvarianteTransicion(monitor,index);
-            monitor->boolQuesWait[index] = 0;
-            signalPoliticMonitor(monitor);
+            monitor->boolQuesWait[index] = 0; //porque en este caso solo puede haber un hilo dormido por transicion
+            signalPoliticMonitor(monitor); //despierto al proximo hilo
             break;
         }
         else
@@ -123,13 +121,12 @@ struct monitor_metodos monitorMetodos = {
     .finalSignalPolitic = finalSignalPolitic,
     .shoot = shoot};
 
-extern void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int numberTransitions, int *boolQuesWait, rdp_o *rdp)
+extern void new_monitor(monitor_o *p_monitor, pthread_mutex_t mutex, pthread_cond_t *espera, int *boolQuesWait, rdp_o *rdp)
 {
     p_monitor->rdp = rdp;
     p_monitor->mutex = mutex;
     p_monitor->espera = espera;
     p_monitor->logInvTransicion = NULL;
-    p_monitor->numberTransitions = numberTransitions;
     p_monitor->boolQuesWait = boolQuesWait;
     p_monitor->end = 0;
     p_monitor->metodos = &monitorMetodos;
