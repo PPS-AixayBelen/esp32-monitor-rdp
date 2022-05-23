@@ -12,7 +12,7 @@ typedef struct monitor monitor_o;
 
 struct monitor_metodos
 {
-
+    int (*verifyMInvariants)(monitor_o *);
     void (*signalPoliticMonitor)(monitor_o *);
     void (*finalSignalPolitic)(monitor_o *);
     int (*shoot)(monitor_o *, int index);
