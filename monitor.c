@@ -3,18 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void logInvariantePlaza(int *vectorMarcado, int size)
-{
-    FILE *invPlaza = fopen("./test/InvariantesPlaza", "a+");
-
-    for (int i = 0; i < size; i++)
-    {
-        fprintf(invPlaza, "%d ", vectorMarcado[i]);
-    }
-    fputs("\n", invPlaza);
-    fclose(invPlaza);
-}
-
 void logInvarianteTransicion(monitor_o *monitor, int index)
 {
     char *transicion[] =  {"T0", "T4", "T11", "T3", "T10", "TA", "T12", "T13", "T14", "T2", "T5", "T6", "T7", "T8", "T9"};
@@ -40,7 +28,22 @@ void finalSignalPolitic(monitor_o *monitor) // Despierta a todos los hilos para 
     }
 }
 
+int verifyMInvariants (monitor_o *monitor){
 
+    int mark[16];
+
+    for (int i = 0; i < 16; i++){
+        mark[i] = monitor->rdp->M[i];
+    }
+
+    if (((mark[1] + mark[7]) == 1) && ((mark[4] + mark[12] + mark[14]) == 1) && ((mark[5] + mark[13] + mark[15]) == 1) && ((mark[0] + mark[6]) == 1) && ((mark[8] + mark[9]) == 1))
+    {
+         return 1;
+    }   
+    else 
+        return 0; //rompiose        
+
+}
 
 void signalPoliticMonitor(monitor_o *monitor) //define que hilo tiene que despertar y lo despierta
 {
@@ -98,7 +101,6 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
         }
         else if (shootResult == 0)
         {
-            logInvariantePlaza(&monitor->rdp->M[0], PLACES);
             logInvarianteTransicion(monitor,index);
             monitor->boolQuesWait[index] = 0; //porque en este caso solo puede haber un hilo dormido por transicion
             signalPoliticMonitor(monitor); //despierto al proximo hilo
@@ -111,12 +113,21 @@ int shoot(monitor_o *monitor, int index) // Dispara una transicion (index) devue
         }
     }
 
+    if( verifyMInvariants(monitor) ){
+        pthread_mutex_unlock(&(monitor->mutex));
+        return 0;
+    }
+    else{
+        printf("error de Invariantes\n");
+        exit(1); //rompiose
+    }
+
     pthread_mutex_unlock(&(monitor->mutex));
-    return 0;
+    return -1;
 }
 
 struct monitor_metodos monitorMetodos = {
-
+    .verifyMInvariants = verifyMInvariants,
     .signalPoliticMonitor = signalPoliticMonitor,
     .finalSignalPolitic = finalSignalPolitic,
     .shoot = shoot};
